@@ -1,0 +1,23 @@
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - gosimple
+    - gocritic
+    - unparam
+    - copyloopvar  # Use this linter to check for loop variable issues
+
+linters-settings:
+  errcheck:
+    exclude-functions: 
+      - "context.*"
+      - "io.Copy"
+
+issues:
+  exclude-use-default: false

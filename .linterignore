@@ -1,0 +1,14 @@
+# Ignore generated files
+/generated/
+*.pb.go
+
+# Ignore vendor directory
+/vendor/
+
+# Ignore specific files
+main_test.go
+
+# Ignore all test files in the utils directory
+/utils/*_test.go
+
+.env
