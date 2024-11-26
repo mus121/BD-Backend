@@ -1,8 +1,9 @@
 module BD-APPLIACTION
 
-go 1.23.2
+go 1.23
 
 require (
+	github.com/gin-contrib/cors v1.7.2
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/oauth2 v0.23.0
 	gorm.io/driver/postgres v1.5.9
