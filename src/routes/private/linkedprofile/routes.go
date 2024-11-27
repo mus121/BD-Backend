@@ -7,6 +7,6 @@ import (
 )
 
 func Linkedfollowprofile(r *gin.Engine) {
-	r.POST("/api/linkedinProfile", followprofile.Connectionprofile)
+	r.POST("/api/linkedinProfile", followprofile.ConnectionProfile)
 	r.GET("/api/linkedinProfile", followprofile.GetConnectionProfile)
 }

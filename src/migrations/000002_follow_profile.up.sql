@@ -6,7 +6,7 @@ CREATE TABLE linkedinprofile (
     is_connected BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
-    deleted_at TIMESTAMP, 
+    deleted_at TIMESTAMP DEFAULT NULL, 
 
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
