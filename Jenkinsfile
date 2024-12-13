@@ -52,13 +52,13 @@ pipeline {
                   commitId = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                   withCredentials([string(credentialsId: 'gcp-service-account-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                   sh "gcloud run deploy ${CLOUD_RUN_SERVICE_NAME_PRODUCTION} --image ${IMAGE_NAME_PROD}:${env.BUILD_NUMBER} --region ${ARTIFACT_REGISTRY_LOCATION} --platform managed"
-                  currentBuild.result = "SUCCESSFUL"
+                  currentBuild.result = "SUCCESS"
                   notifyBuild(currentBuild.result, commitId, '0')
                 }
               } 
               catch (e) {
                 currentBuild.result = "FAILED"
-                notifyBuild(currentBuild.result,commitId,'0')
+                notifyBuild(currentBuild.result,'0','0')
                 throw e
               }
             }
@@ -119,7 +119,7 @@ pipeline {
 }
 
 def notifyBuild(String buildStatus = 'STARTED',String gitVersion = '0' ,String ecrTaskVersion = '0') {
-  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+  buildStatus =  buildStatus ?: 'SUCCESS'
   // Default values
   def colorName = 'RED'
   def colorCode = '#ff0000'
@@ -128,7 +128,7 @@ def notifyBuild(String buildStatus = 'STARTED',String gitVersion = '0' ,String e
   if (buildStatus == 'STARTED') {
     color = 'YELLOW'
     colorCode = '#ffff00'
-  } else if (buildStatus == 'SUCCESSFUL') {
+  } else if (buildStatus == 'SUCCESS') {
     color = 'GREEN'
     colorCode = '#00ff00'
   } else {
