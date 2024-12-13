@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -13,9 +13,9 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Error loading .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	fmt.Println("Error loading .env file")
+	// }
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
 		getEnv("DB_HOST"), getEnv("DB_USER"), getEnv("DB_PASSWORD"), getEnv("DB_NAME"), getEnv("DB_PORT"))
@@ -31,6 +31,6 @@ func getEnv(key string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
-	fmt.Println("Environment variable %s not set", key)
+	// fmt.Println("Environment variable %s not set", key)
 	return ""
 }
