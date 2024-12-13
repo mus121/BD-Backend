@@ -1,4 +1,4 @@
-package googleAuth
+package public
 
 import (
 	"BD-APPLIACTION/src/controllers/google"

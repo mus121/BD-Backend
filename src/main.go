@@ -6,8 +6,8 @@ import (
 
 	"BD-APPLIACTION/src/config"
 	"BD-APPLIACTION/src/config/google"
-	"BD-APPLIACTION/src/routes/private/linkedprofile"
-	"BD-APPLIACTION/src/routes/public/googleAuth"
+	"BD-APPLIACTION/src/routes/private"
+	"BD-APPLIACTION/src/routes/public"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -27,23 +27,23 @@ func main() {
 	google.InitgoogleOAuth()
 
 	// Set up Gin router
-	r := gin.Default()
+	router := gin.Default()
 
 	// Add CORS middleware before defining routes
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},                   
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},                       
-		AllowCredentials: true,                                               
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
 	}))
 
 	// Define your routes
-	googleAuth.Googleauth(r)             
-	linkedprofile.Linkedfollowprofile(r) 
+	public.Googleauth(router)
+	private.Linkedfollowprofile(router)
 
 	// Test CORS
-	r.GET("/", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "CORS works!"})
 	})
 
@@ -53,5 +53,5 @@ func main() {
 		port = "8000"
 	}
 	log.Printf("Server is running on port %s", port)
-	log.Fatal(r.Run(":" + port))
+	log.Fatal(router.Run(":" + port))
 }

@@ -14,7 +14,7 @@ var DB *gorm.DB
 
 func ConnectDatabase() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s",
@@ -31,6 +31,6 @@ func getEnv(key string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
 	}
-	log.Fatalf("Environment variable %s not set", key)
+	fmt.Println("Environment variable %s not set", key)
 	return ""
 }
