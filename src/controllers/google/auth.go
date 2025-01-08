@@ -39,7 +39,7 @@ func exchangeTokenAndSetSession(c *gin.Context) bool {
 	return true
 }
 
-// Logs out by clearing session cookies.
+// Logs out by clearing session cookies
 func Handlelogout(c *gin.Context) {
 	helper.ClearSessionCookies(c)
 	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
