@@ -1,0 +1,11 @@
+server:  
+  mode: "development"  
+  readTimeout: "5s"  
+  writeTimeout: "10s"  
+
+jwt:  
+  accessTokenExpiry: "15m"  
+  refreshTokenExpiry: "168h"  
+
+google:  
+  redirectUrl: "http://localhost:8000/auth/google/callback"  
