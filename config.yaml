@@ -9,3 +9,6 @@ jwt:
 
 google:  
   redirectUrl: "http://localhost:8000/auth/google/callback"  
+
+ai:
+  timeout: 30s

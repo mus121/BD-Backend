@@ -1,4 +1,4 @@
-.PHONY: build run test lint migrate-up migrate-down docker-up docker-down
+.PHONY: build run test lint migrate-up migrate-down docker-up docker-down setup
 
 build:
 	go build -o bin/main cmd/main.go
@@ -23,3 +23,7 @@ docker-up:
 
 docker-down:
 	docker-compose down
+
+setup:
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest

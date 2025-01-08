@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"BD-Backend/config"
 	"BD-Backend/internal/handler"
@@ -21,10 +22,12 @@ type Server struct {
 }
 
 func NewServer(cfg *config.Config, logger *logger.Logger) *Server {
+	gin.SetMode(cfg.Server.Mode)
 	router := gin.New()
 
-	// Set up middleware
+	// Setup middleware
 	router.Use(gin.Recovery())
+	router.Use(middleware.RequestLogger(logger))
 	router.Use(middleware.CORSMiddleware())
 
 	return &Server{
@@ -34,44 +37,67 @@ func NewServer(cfg *config.Config, logger *logger.Logger) *Server {
 	}
 }
 
-func (s *Server) setupRoutes(
+func (s *Server) SetupRoutes(
 	authHandler *handler.AuthHandler,
+	aiHandler *handler.AIHandler,
 	linkedInHandler *handler.LinkedInHandler,
 	authMiddleware gin.HandlerFunc,
 ) {
-	// Public routes
-	public := s.router.Group("/api")
+	// Health check
+	s.router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
+
+	// API routes
+	api := s.router.Group("/api")
 	{
-		auth := public.Group("/auth")
+		// Auth routes
+		auth := api.Group("/auth")
 		{
 			auth.GET("/google/login", authHandler.HandleGoogleLogin)
 			auth.GET("/google/callback", authHandler.HandleGoogleCallback)
-			auth.GET("/logout", authHandler.HandleLogout)
+			auth.POST("/logout", authHandler.HandleLogout)
 		}
-	}
 
-	// Protected routes
-	private := s.router.Group("/api")
-	private.Use(authMiddleware)
-	{
-		linkedin := private.Group("/linkedin")
+		// Protected routes
+		protected := api.Group("")
+		protected.Use(authMiddleware)
 		{
-			linkedin.POST("/profile", linkedInHandler.HandleConnectionProfile)
-			linkedin.GET("/connections", linkedInHandler.HandleGetConnections)
+			// LinkedIn routes
+			linkedin := protected.Group("/linkedin")
+			{
+				linkedin.POST("/profile", linkedInHandler.HandleConnectionProfile)
+				linkedin.GET("/connections", linkedInHandler.HandleGetConnections)
+			}
+
+			// AI routes
+			ai := protected.Group("/ai")
+			{
+				ai.POST("/find-person", aiHandler.HandleFindPerson)
+				ai.POST("/similar-profiles", aiHandler.HandleSimilarProfiles)
+			}
 		}
 	}
 }
 
 func (s *Server) Start() error {
 	s.httpServer = &http.Server{
-		Addr:    fmt.Sprintf(":%s", s.config.Server.Port),
-		Handler: s.router,
+		Addr:         fmt.Sprintf(":%s", s.config.Server.Port),
+		Handler:      s.router,
+		ReadTimeout:  s.config.Server.ReadTimeout,
+		WriteTimeout: s.config.Server.WriteTimeout,
+		IdleTimeout:  120 * time.Second,
 	}
 
-	s.logger.Info("Starting server on port " + s.config.Server.Port)
-	return s.httpServer.ListenAndServe()
+	s.logger.Info("Starting server", "port", s.config.Server.Port)
+	if err := s.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		return fmt.Errorf("failed to start server: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
+	s.logger.Info("Shutting down server...")
 	return s.httpServer.Shutdown(ctx)
 }
