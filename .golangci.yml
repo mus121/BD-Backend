@@ -1,23 +1,24 @@
-run:
-  timeout: 5m
-  modules-download-mode: readonly
-
 linters:
   enable:
-    - errcheck
+    - gofmt
+    - golint
     - govet
+    - errcheck
     - staticcheck
-    - unused
     - gosimple
-    - gocritic
-    - unparam
-    - copyloopvar  # Use this linter to check for loop variable issues
+    - ineffassign
+    - unconvert
+    - misspell
+    - gosec
 
 linters-settings:
-  errcheck:
-    exclude-functions: 
-      - "context.*"
-      - "io.Copy"
+  golint:
+    min-confidence: 0.8
+  gofmt:
+    simplify: true
 
-issues:
-  exclude-use-default: false
+run:
+  deadline: 5m
+  tests: true
+  skip-dirs:
+    - vendor/
