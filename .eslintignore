@@ -1,0 +1,5 @@
+/migrations/*
+/build/*
+node_modules
+public
+amplify
