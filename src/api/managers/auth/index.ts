@@ -163,5 +163,8 @@ export const handleGoogleAuth = async (
         .status(HttpStatusCode.InternalServerError)
         .json({ message: 'Authentication failed' });
     }
+
+    // Explicitly return undefined if headers were already sent
+    return undefined;
   }
 };

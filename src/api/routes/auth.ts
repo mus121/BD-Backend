@@ -32,13 +32,10 @@ router.get('/google/callback', (async (
 ) => {
   try {
     await controller.googleCallback(req, res);
-    if (!res.headersSent) {
-      return res.redirect(BD_CONFIG.homePage ?? '/');
-    }
-    // Explicit return to satisfy ESLint
+
+    return res.redirect(BD_CONFIG.homePage ?? '/');
   } catch (error) {
-    next(error);
-    // Ensure function always returns something
+    return next(error);
   }
 }) as RequestHandler);
 

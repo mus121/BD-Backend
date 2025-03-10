@@ -128,13 +128,17 @@ export const handleProfileConnection = async ({
     });
 
     if (existingConnection) {
-      const { id, public_identifier, entity_urn, connection_status } =
-        existingConnection;
+      const {
+        id,
+        public_identifier: existingPublicIdentifier,
+        entity_urn: existingEntityUrn,
+        connection_status: existingConnectionStatus,
+      } = existingConnection;
 
       if (
-        public_identifier === publicIdentifier &&
-        entity_urn === entityUrn &&
-        connection_status === connectionStatus
+        existingPublicIdentifier === publicIdentifier &&
+        existingEntityUrn === entityUrn &&
+        existingConnectionStatus === connectionStatus
       ) {
         await updateConnectionTimestamp(id, transaction);
       } else {
