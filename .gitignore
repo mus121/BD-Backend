@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 node_modules/*
 build/*
 
 *.env
-=======
->>>>>>> main
 .env
