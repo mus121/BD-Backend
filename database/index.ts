@@ -1,13 +1,15 @@
 import { Dialect, Sequelize } from 'sequelize';
-import * as dbConfig from '../config/config.json';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const sequelize = new Sequelize(
-  dbConfig.development.database,
-  dbConfig.development.username,
-  dbConfig.development.password,
+  process.env.DB_NAME as string,
+  process.env.DB_USER as string,
+  process.env.DB_PASSWORD as string,
   {
-    host: dbConfig.development.host,
-    dialect: dbConfig.development.dialect as Dialect,
+    host: process.env.DB_HOST as string,
+    dialect: process.env.DB_DIALECT as Dialect,
     logging: console.log,
     retry: {
       max: 3,
