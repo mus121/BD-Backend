@@ -33,7 +33,9 @@ router.get('/google/callback', (async (
   try {
     await controller.googleCallback(req, res);
 
-    return res.redirect(BD_CONFIG.homePage ?? '/');
+    if (!res.headersSent) {
+      return res.redirect(BD_CONFIG.homePage ?? '/');
+    }
   } catch (error) {
     return next(error);
   }
@@ -46,7 +48,11 @@ router.post('/logout', (async (
 ) => {
   try {
     await controller.logout(req, res);
-    return res.status(HttpStatusCode.Ok).json({ message: 'Logout successful' });
+    if (!res.headersSent) {
+      return res
+        .status(HttpStatusCode.Ok)
+        .json({ message: 'Logout successful' });
+    }
   } catch (error) {
     return next(error);
   }
