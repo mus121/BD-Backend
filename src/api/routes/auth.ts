@@ -41,7 +41,11 @@ router.get('/google/callback', (async (
 
     setCookies(req, res);
 
-    return res.redirect(BD_CONFIG.homePage ?? '/');
+    const redirectUrl = BD_CONFIG.allowedOrigin
+      ? `${BD_CONFIG.allowedOrigin}/public/google/success?success=true`
+      : '/';
+
+    return res.redirect(redirectUrl);
   } catch (error) {
     return next(error);
   }
