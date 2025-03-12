@@ -6,7 +6,6 @@ import {
   RequestHandler,
 } from 'express';
 import { AuthController } from '../controllers/auth';
-import { HttpStatusCode } from '../../utils/bdError';
 import { BD_CONFIG } from '../../constants';
 
 const router = Router();
@@ -33,22 +32,11 @@ router.get('/google/callback', (async (
   try {
     await controller.googleCallback(req, res);
 
-    return res.redirect(BD_CONFIG.homePage ?? '/');
+    if (!res.headersSent) {
+      res.redirect(BD_CONFIG.homePage ?? '/');
+    }
   } catch (error) {
-    return next(error);
-  }
-}) as RequestHandler);
-
-router.post('/logout', (async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    await controller.logout(req, res);
-    return res.status(HttpStatusCode.Ok).json({ message: 'Logout successful' });
-  } catch (error) {
-    return next(error);
+    next(error);
   }
 }) as RequestHandler);
 
