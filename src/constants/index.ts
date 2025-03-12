@@ -7,6 +7,7 @@ export const BD_CONFIG = {
   allowedOrigin: process.env.ALLOWED_ORIGIN,
   homePage: process.env.HOME_PAGE_URL,
   serverUrl: process.env.SERVER_URL,
+  googleSuccessPage: process.env.GOOGLE_SUCCESS,
 };
 
 export const BD_AUTH = {
