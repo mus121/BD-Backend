@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "Admin@123",
-    "database": "postgres",
-    "host": "127.0.0.1",
+    "username": "bd_admin",
+    "password": "x8bSbEcOZuIkVhe",
+    "database": "fs-bd-staging",
+    "host": "35.209.166.222",
     "dialect": "postgres"
   },
   "test": {

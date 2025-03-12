@@ -10,6 +10,7 @@ export const generateAuthUrl = (state: string): string => {
   return googleAuthConfig.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent',
+    redirect_uri: 'http://localhost:5000/public/auth/google/callback',
     scope: [
       process.env.GOOGLE_EMAIL_INFO!,
       process.env.GOOGLE_PROFILE_INFO!,

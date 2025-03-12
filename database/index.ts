@@ -10,14 +10,9 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST as string,
     dialect: process.env.DB_DIALECT as Dialect,
-    logging: console.log,
+    logging: true,
     retry: {
       max: 3,
-      report: (message, obj, err) => {
-        console.error('Database connection could not be established.');
-        console.error('DB ERROR: ', message);
-        console.error(err);
-      },
     },
   },
 );
