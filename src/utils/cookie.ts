@@ -5,35 +5,39 @@ export const setCookies = (req: Request, res: Response) => {
     const { accessToken, refreshToken, userInfo } = res.locals.authData;
 
     res.cookie('access_token', accessToken, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       sameSite: 'none',
       path: '/',
       maxAge: 15 * 60 * 1000,
+      domain: '.vercel.app',
     });
 
     res.cookie('refresh_token', refreshToken, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: '.vercel.app',
     });
 
     res.cookie('user_id', userInfo.id, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: '.vercel.app',
     });
 
     res.cookie('user_email', userInfo.email, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      domain: '.vercel.app',
     });
 
     res.locals.userInfo = userInfo;
