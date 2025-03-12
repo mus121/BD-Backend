@@ -7,8 +7,7 @@ export const authMiddleware = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    // Retrieve token from cookies or headers
-    const token = req.cookies?.session_token;
+    const token = req.cookies?.access_token;
 
     if (!token) {
       res.status(401).json({ message: 'Unauthorized: No token provided' });

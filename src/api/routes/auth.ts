@@ -7,6 +7,7 @@ import {
 } from 'express';
 import { AuthController } from '../controllers/auth';
 import { BD_CONFIG } from '../../constants';
+import { setCookies } from '../../utils/cookie';
 
 const router = Router();
 const controller = new AuthController();
@@ -30,13 +31,19 @@ router.get('/google/callback', (async (
   next: NextFunction,
 ) => {
   try {
-    await controller.googleCallback(req, res);
+    const authData = await controller.googleCallback(req.query);
 
-    if (!res.headersSent) {
-      res.redirect(BD_CONFIG.homePage ?? '/');
+    res.locals.authData = authData;
+
+    if (!res.locals.authData) {
+      return res.status(400).json({ message: 'Authentication data not found' });
     }
+
+    setCookies(req, res);
+
+    return res.redirect(BD_CONFIG.homePage ?? '/');
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }) as RequestHandler);
 

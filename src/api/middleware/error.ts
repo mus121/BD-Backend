@@ -11,6 +11,7 @@ import { BDError } from '../../utils/bdError';
 const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
   try {
     console.log('Middleware Error Handling', err);
+
     const httpCode = err.httpCode || 500;
     const httpError = err.httpError || 'Internal Server Error';
 
@@ -27,7 +28,7 @@ const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
 
     const errorStack = process.env.NODE_ENV !== 'production' ? err.stack : {};
 
-    res.status(httpCode).send({
+    res.status(httpCode).json({
       success: false,
       stack: errorStack,
       message: `${customErrorCode || ''} ${customError || ''} ${
@@ -37,8 +38,7 @@ const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
       httpError,
     });
   } catch (error) {
-    console.log('error while error handling lmao');
-    throw error;
+    console.log('Error occurred while handling another error:', error);
   }
 };
 

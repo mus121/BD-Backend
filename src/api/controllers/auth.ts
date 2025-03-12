@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { ParsedQs } from 'qs';
 import { validationCode } from '../../validators/auth';
 import { handleGoogleAuth } from '../managers/auth';
 import { generateAuthUrl, generateState } from '../../utils/auth';
-import { HttpStatusCode } from '../../utils/bdError';
+import { AuthDataType } from '../../interfaces/authRequest';
 
 export class AuthController {
   public async googleLogin(): Promise<string> {
@@ -10,39 +10,22 @@ export class AuthController {
     return generateAuthUrl(state);
   }
 
-  public async googleCallback(req: Request, res: Response): Promise<void> {
-    const validationResult = validationCode.safeParse(req.query);
-
-    if (!validationResult.success) {
-      res.status(HttpStatusCode.BadRequest).json({
-        error: 'Invalid request parameters',
-        details: validationResult.error.errors,
-      });
-      return;
-    }
-
-    const { code } = validationResult.data;
-    await handleGoogleAuth(code, req, res);
-  }
-
-  public async logout(req: Request, res: Response): Promise<void> {
+  public async googleCallback(
+    query: ParsedQs,
+  ): Promise<AuthDataType | undefined> {
     try {
-      res.clearCookie('session_token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
-      res.clearCookie('refresh_token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-      });
-      res.clearCookie('user_email', { secure: true, sameSite: 'strict' });
+      const validationResult = validationCode.safeParse(query);
 
-      res.status(HttpStatusCode.Ok).json({ message: 'Logout successful' });
+      if (!validationResult.success || !validationResult.data) {
+        throw new Error('Validation error');
+      }
+      const { code } = validationResult.data;
+      const authData = await handleGoogleAuth(code);
+
+      return authData;
     } catch (error) {
-      console.error('Logout Error:', { error });
-      throw new Error('Logout failed');
+      console.error('Error during Google authentication:', error);
+      throw new Error('Google authentication failed');
     }
   }
 }

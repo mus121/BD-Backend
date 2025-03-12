@@ -1,15 +1,14 @@
 import axios, { HttpStatusCode } from 'axios';
-import dotenv from 'dotenv';
 import { googleAuthConfig } from '../../database/auth';
 import { TokenPayload } from '../interfaces/models/users';
 import { BDError, ErrorCode } from './bdError';
-
-dotenv.config();
+import { BD_CONFIG } from '../constants';
 
 export const generateAuthUrl = (state: string): string => {
   return googleAuthConfig.generateAuthUrl({
     access_type: 'offline',
     prompt: 'consent',
+    redirect_uri: `${BD_CONFIG.serverUrl}/public/auth/google/callback`,
     scope: [
       process.env.GOOGLE_EMAIL_INFO!,
       process.env.GOOGLE_PROFILE_INFO!,

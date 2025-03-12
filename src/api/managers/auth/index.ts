@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { QueryTypes, Transaction } from 'sequelize';
 import { ulid } from 'ulid';
 import { FetchUser, UserAttributes } from '../../../interfaces/models/users';
@@ -6,7 +5,6 @@ import { sequelize } from '../../../../database';
 import { BDError, ErrorCode, HttpStatusCode } from '../../../utils/bdError';
 import { fetchGoogleUserInfo, exchangeToken } from '../../../utils/auth';
 import { generateJWT } from '../../../utils/jwtUtils';
-import { BD_CONFIG } from '../../../constants';
 
 // Fetch user by email
 export const getUserByEmail = async ({
@@ -99,72 +97,24 @@ export const findOrCreateUser = async (
   }
 };
 
-const setCookies = (
-  res: Response,
-  accessToken: string,
-  refreshToken: string,
-  userInfo: { email: string; id: string },
-) => {
-  res.cookie('session_token', accessToken, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 15 * 60 * 1000,
-  });
-  res.cookie('refresh_token', refreshToken, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.cookie('user_email', userInfo.email, {
-    httpOnly: true,
-    secure: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-  res.cookie('user_id', userInfo.id, { httpOnly: true, secure: true });
-};
+export const handleGoogleAuth = async (code: string) => {
+  const token = await exchangeToken(code);
+  if (!token.access_token) throw new Error('Failed to get Access Token');
 
-export const handleGoogleAuth = async (
-  code: string,
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const token = await exchangeToken(code);
-    if (!token.access_token) throw new Error('Failed to get Access Token');
-
-    const userInfo = await fetchGoogleUserInfo(token.access_token);
-
-    if (!token.refresh_token || !userInfo.email) {
-      throw new Error('Missing required token or user information');
-    }
-
-    const userId = await findOrCreateUser(
-      'google',
-      token.access_token,
-      token.refresh_token,
-      userInfo.email,
-    );
-
-    // Generate JWT tokens
-    const accessToken = generateJWT({ id: userId }, 15 * 60);
-    const refreshToken = generateJWT({ id: userId }, 7 * 24 * 60 * 60);
-
-    // Set cookies
-    setCookies(res, accessToken, refreshToken, {
-      email: userInfo.email,
-      id: userId,
-    });
-
-    return res.redirect(BD_CONFIG.homePage ?? '/');
-  } catch (error) {
-    console.error('Error during Google authentication:', error);
-    if (!res.headersSent) {
-      return res
-        .status(HttpStatusCode.InternalServerError)
-        .json({ message: 'Authentication failed' });
-    }
-
-    // Explicitly return undefined if headers were already sent
-    return undefined;
+  const userInfo = await fetchGoogleUserInfo(token.access_token);
+  if (!token.refresh_token || !userInfo.email) {
+    throw new Error('Missing required token or user information');
   }
+
+  const userId = await findOrCreateUser(
+    'google',
+    token.access_token,
+    token.refresh_token,
+    userInfo.email,
+  );
+
+  const accessToken = generateJWT({ id: userId }, 15 * 60);
+  const refreshToken = generateJWT({ id: userId }, 7 * 24 * 60 * 60);
+
+  return { accessToken, refreshToken, userInfo };
 };
