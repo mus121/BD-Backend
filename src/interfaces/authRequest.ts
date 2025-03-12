@@ -1,6 +1,7 @@
-import { Request } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
+import { TokenPayload } from './models/users';
 
-export type AuthRequest = Request & {
-  user?: (JwtPayload & { id: string }) | string;
+export type AuthDataType = {
+  accessToken: string;
+  refreshToken: string;
+  userInfo: TokenPayload;
 };

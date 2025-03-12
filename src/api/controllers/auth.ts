@@ -2,13 +2,7 @@ import { ParsedQs } from 'qs';
 import { validationCode } from '../../validators/auth';
 import { handleGoogleAuth } from '../managers/auth';
 import { generateAuthUrl, generateState } from '../../utils/auth';
-import { TokenPayload } from '../../interfaces/models/users';
-
-interface AuthDataType {
-  accessToken: string;
-  refreshToken: string;
-  userInfo: TokenPayload;
-}
+import { AuthDataType } from '../../interfaces/authRequest';
 
 export class AuthController {
   public async googleLogin(): Promise<string> {
@@ -21,10 +15,6 @@ export class AuthController {
   ): Promise<AuthDataType | undefined> {
     try {
       const validationResult = validationCode.safeParse(query);
-
-      if (!validationResult.success) {
-        console.log('Vadiation error');
-      }
 
       if (!validationResult.success || !validationResult.data) {
         throw new Error('Validation error');

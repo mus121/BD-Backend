@@ -28,11 +28,6 @@ const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
 
     const errorStack = process.env.NODE_ENV !== 'production' ? err.stack : {};
 
-    if (!res || typeof res.status !== 'function') {
-      console.error('Invalid response object:', res);
-      return;
-    }
-
     res.status(httpCode).json({
       success: false,
       stack: errorStack,
