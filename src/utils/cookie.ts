@@ -7,7 +7,7 @@ export const setCookies = (req: Request, res: Response) => {
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 15 * 60 * 1000,
     });
@@ -15,7 +15,7 @@ export const setCookies = (req: Request, res: Response) => {
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -23,7 +23,7 @@ export const setCookies = (req: Request, res: Response) => {
     res.cookie('user_id', userInfo.id, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -31,7 +31,7 @@ export const setCookies = (req: Request, res: Response) => {
     res.cookie('user_email', userInfo.email, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
