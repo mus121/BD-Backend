@@ -10,7 +10,7 @@ export const setCookies = (req: Request, res: Response) => {
       sameSite: 'none',
       path: '/',
       maxAge: 15 * 60 * 1000,
-      domain: '.vercel.app',
+      domain: '.qlu.ai',
     });
 
     res.cookie('refresh_token', refreshToken, {
@@ -19,7 +19,7 @@ export const setCookies = (req: Request, res: Response) => {
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: '.vercel.app',
+      domain: '.qlu.ai',
     });
 
     res.cookie('user_id', userInfo.id, {
@@ -28,7 +28,7 @@ export const setCookies = (req: Request, res: Response) => {
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: '.vercel.app',
+      domain: '.qlu.ai',
     });
 
     res.cookie('user_email', userInfo.email, {
@@ -37,7 +37,7 @@ export const setCookies = (req: Request, res: Response) => {
       sameSite: 'none',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      domain: '.vercel.app',
+      domain: '.qlu.ai',
     });
 
     res.locals.userInfo = userInfo;
