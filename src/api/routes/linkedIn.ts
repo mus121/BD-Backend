@@ -49,10 +49,10 @@ router.get('/connection', validateRequest(getConnectedProfilesSchema), (async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.query.userId as string;
+    const userId = req.query.userId as unknown as number;
     if (!userId) {
       res.status(HttpStatusCode.BadRequest).json({
-        error: 'userId is required and must be a string',
+        error: 'userId is required and must be a number',
       });
       return;
     }

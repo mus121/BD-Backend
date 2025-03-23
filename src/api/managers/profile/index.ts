@@ -11,10 +11,10 @@ import { sequelize } from '../../../../database';
  * Fetch existing LinkedIn profile by user ID
  */
 const fetchLinkedInProfileId = async (
-  userId: string,
+  userId: number,
   transaction: Transaction,
-): Promise<string | null> => {
-  const result: { id: string }[] = await sequelize.query(
+): Promise<number | null> => {
+  const result = await sequelize.query<{ id: number }>(
     'SELECT id FROM linkedin_profile WHERE user_id = :userId LIMIT 1;',
     {
       type: QueryTypes.SELECT,
@@ -22,6 +22,7 @@ const fetchLinkedInProfileId = async (
       transaction,
     },
   );
+
   return result.length > 0 ? result[0].id : null;
 };
 
@@ -29,7 +30,7 @@ const fetchLinkedInProfileId = async (
  * Update LinkedIn profile if it exists
  */
 const updateLinkedInProfileByUserId = async (
-  userId: string,
+  userId: number,
   firstName: string,
   lastName: string,
   publicIdentifier: string,
@@ -62,7 +63,7 @@ const updateLinkedInProfileByUserId = async (
  * Create a new LinkedIn profile
  */
 const insertLinkedInProfile = async (
-  userId: string,
+  userId: number,
   firstName: string,
   lastName: string,
   publicIdentifier: string,

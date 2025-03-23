@@ -5,6 +5,6 @@ import aiServiceRouter from './aiService';
 
 const router = Router();
 router.use('/linkedin', linkedInProfileRouter);
-router.use('/me', userRouter);
+router.use('/user', userRouter);
 router.use('/aiProfile', aiServiceRouter);
 export default router;

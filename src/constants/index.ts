@@ -14,3 +14,7 @@ export const BD_AUTH = {
   googleClientId: process.env.GOOGLE_CLIENT_ID,
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
 };
+
+export const COOKIE_NAME = {
+  sessionCookieName: process.env.SESSION_COOKIE_NAME!,
+};

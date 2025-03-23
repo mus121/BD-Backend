@@ -31,14 +31,7 @@ export class LinkedInController {
   }
 
   @Get('/connection')
-  public async getConnectedProfiles(@Query() userId: string) {
-    if (!userId) {
-      throw new BDError(
-        'userId is required.',
-        HttpStatusCode.BadRequest,
-        ErrorCode.ValidationFailed,
-      );
-    }
+  public async getConnectedProfiles(@Query() userId: number) {
     const profiles = await retrieveConnectedProfiles({ userId });
     return { success: true, data: profiles };
   }

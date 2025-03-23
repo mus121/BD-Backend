@@ -16,13 +16,23 @@ module.exports = {
           },
           user_id: {
             allowNull: false,
-            type: Sequelize.STRING(36),
-            references: {
-              model: 'user',
-              key: 'id',
-            },
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE',
+            type: Sequelize.INTEGER,
+          },
+          first_name: {
+            allowNull: false,
+            type: Sequelize.STRING,
+          },
+          last_name: {
+            allowNull: false,
+            type: Sequelize.STRING,
+          },
+          headline: {
+            allowNull: false,
+            type: Sequelize.STRING,
+          },
+          profile_picture: {
+            allowNull: true,
+            type: Sequelize.STRING,
           },
           public_identifier: {
             allowNull: true,
