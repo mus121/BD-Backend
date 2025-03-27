@@ -1,22 +1,22 @@
 import {
+  Router,
   Request,
   Response,
-  RequestHandler,
-  Router,
   NextFunction,
+  RequestHandler,
 } from 'express';
-import { AiProfileController } from '../controllers/aiService';
+import { ProfileSegmentController } from '../controllers/profileSegment';
 
 const router = Router();
-const controller = new AiProfileController();
+const controller = new ProfileSegmentController();
 
-router.post('/lables', (async (
+router.post('/segments', (async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.getProfileSegments(req.body);
+    const response = await controller.saveSegment(req.body);
     return res.send(response);
   } catch (error) {
     return next(error);

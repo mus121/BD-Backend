@@ -230,7 +230,6 @@ export const retrieveConnectedProfiles = async ({
       type: QueryTypes.SELECT,
       replacements: { userId },
     });
-    console.log('Profiles', profiles);
     return profiles;
   } catch (error) {
     console.error('Database Error:', error);

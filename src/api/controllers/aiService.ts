@@ -1,12 +1,17 @@
-import { Tags, Route, Get } from 'tsoa';
-import { getProfiles } from '../managers/aiService';
-import { Profile } from '../../interfaces/aiService';
+import { Tags, Route, Post, Body } from 'tsoa';
+import { esIdsFetch } from '../managers/esIds/index';
+
+import { ProfileRequest } from '../../interfaces/aiService';
+import { getProfileSegmentByEsids } from '../managers/aiService';
 
 @Tags('profile')
 @Route('profile')
 export class AiProfileController {
-  @Get('/')
-  public async getAllProfiles(): Promise<Profile[]> {
-    return getProfiles();
+  @Post('/getProfileSegments')
+  public async getProfileSegments(
+    @Body() segmentData: string[],
+  ): Promise<ProfileRequest> {
+    const data = await esIdsFetch(segmentData);
+    return getProfileSegmentByEsids(data);
   }
 }

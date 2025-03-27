@@ -17,37 +17,62 @@ export const authMiddleware = async (
     const { [COOKIE_NAME.sessionCookieName]: session } = req.cookies;
 
     if (!session) {
-      throw new BDError(
-        'Invalid access token',
-        HttpStatusCode.Unauthorized,
-        ErrorCode.ValidationFailed,
+      return next(
+        new BDError(
+          'Invalid access token',
+          HttpStatusCode.Unauthorized,
+          ErrorCode.ValidationFailed,
+        ),
       );
-    } else {
-      try {
-        const response = await retry(
-          () =>
-            qlu2AxiosInstance.get<IGetCurrentUserResponse>(
-              `/public/auth/current`,
-              {
-                headers: {
-                  cookie: `${COOKIE_NAME.sessionCookieName}=${session};`,
-                },
-              },
-            ),
-          3,
-          1 * 1000,
-        );
+    }
 
-        if (!response.data?.response) {
-          throw new BDError(
+    try {
+      const response = await retry(
+        () =>
+          qlu2AxiosInstance.get<IGetCurrentUserResponse>(
+            '/public/auth/current',
+            {
+              headers: {
+                cookie: `${COOKIE_NAME.sessionCookieName}=${session};`,
+              },
+            },
+          ),
+        3,
+        1 * 1000,
+      );
+
+      if (!response.data?.response) {
+        return next(
+          new BDError(
             'Invalid access token',
             HttpStatusCode.Unauthorized,
             ErrorCode.ValidationFailed,
-          );
-        }
+          ),
+        );
+      }
 
-        res.locals.user = response.data.response;
-        response.headers['set-cookie']?.forEach((cookie) => {
+      res.locals.user = response.data.response;
+
+      response.headers['set-cookie']?.forEach((cookie) => {
+        const parsedCookie = setCookieParser.parseString(cookie, {
+          decodeValues: true,
+        });
+
+        if (parsedCookie.name === COOKIE_NAME.sessionCookieName) {
+          setSessionCookie(res, {
+            sessionCookie: parsedCookie.value,
+            domain: parsedCookie.domain,
+            httpOnly: parsedCookie.httpOnly,
+            secure: parsedCookie.secure,
+            expires: parsedCookie.expires,
+          });
+        }
+      });
+
+      return next();
+    } catch (error) {
+      if (isAxiosError(error)) {
+        error.response?.headers['set-cookie']?.forEach((cookie) => {
           const parsedCookie = setCookieParser.parseString(cookie, {
             decodeValues: true,
           });
@@ -62,35 +87,18 @@ export const authMiddleware = async (
             });
           }
         });
-
-        return next();
-      } catch (error) {
-        if (isAxiosError(error)) {
-          error.response?.headers['set-cookie']?.forEach((cookie) => {
-            const parsedCookie = setCookieParser.parseString(cookie, {
-              decodeValues: true,
-            });
-
-            if (parsedCookie.name === COOKIE_NAME.sessionCookieName) {
-              setSessionCookie(res, {
-                sessionCookie: parsedCookie.value,
-                domain: parsedCookie.domain,
-                httpOnly: parsedCookie.httpOnly,
-                secure: parsedCookie.secure,
-                expires: parsedCookie.expires,
-              });
-            }
-          });
-        }
-        throw error;
       }
+
+      return next(error);
     }
   } catch (e) {
-    console.log('Error in auth middleware', { e });
-    const error = new BDError(
-      'unauthenticated',
-      HttpStatusCode.Unauthorized,
-      ErrorCode.ValidationFailed,
+    console.error('Error in auth middleware', { e });
+    return next(
+      new BDError(
+        'Unauthenticated',
+        HttpStatusCode.Unauthorized,
+        ErrorCode.ValidationFailed,
+      ),
     );
   }
 };

@@ -9,7 +9,6 @@ import { LinkedInController } from '../controllers/linkedIn';
 import { validateRequest } from '../middleware/validation';
 import {
   getConnectedProfilesSchema,
-  liConnectionSchema,
   liProfileSchema,
 } from '../../validators/linkedin';
 import { HttpStatusCode } from '../../utils/bdError';
@@ -30,7 +29,7 @@ router.post('/profile', validateRequest(liProfileSchema), (async (
   }
 }) as RequestHandler);
 
-router.post('/follow', validateRequest(liConnectionSchema), (async (
+router.post('/follow', (async (
   req: Request,
   res: Response,
   next: NextFunction,
