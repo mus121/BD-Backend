@@ -9,7 +9,6 @@ import { LinkedInController } from '../controllers/linkedIn';
 import { validateRequest } from '../middleware/validation';
 import {
   getConnectedProfilesSchema,
-  liConnectionSchema,
   liProfileSchema,
 } from '../../validators/linkedin';
 import { HttpStatusCode } from '../../utils/bdError';
@@ -30,7 +29,7 @@ router.post('/profile', validateRequest(liProfileSchema), (async (
   }
 }) as RequestHandler);
 
-router.post('/follow', validateRequest(liConnectionSchema), (async (
+router.post('/follow', (async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -49,10 +48,10 @@ router.get('/connection', validateRequest(getConnectedProfilesSchema), (async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.query.userId as string;
+    const userId = req.query.userId as unknown as number;
     if (!userId) {
       res.status(HttpStatusCode.BadRequest).json({
-        error: 'userId is required and must be a string',
+        error: 'userId is required and must be a number',
       });
       return;
     }

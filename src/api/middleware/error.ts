@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { BDError } from '../../utils/bdError';
 
 /**
@@ -8,7 +8,12 @@ import { BDError } from '../../utils/bdError';
  * @param res - The Express response object.
  * @param _next - The next middleware function.
  */
-const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
+const errorMiddleware = (
+  err: BDError,
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+): void => {
   try {
     console.log('Middleware Error Handling', err);
 
@@ -28,17 +33,20 @@ const errorMiddleware = (err: BDError, req: Request, res: Response): void => {
 
     const errorStack = process.env.NODE_ENV !== 'production' ? err.stack : {};
 
-    res.status(httpCode).json({
-      success: false,
-      stack: errorStack,
-      message: `${customErrorCode || ''} ${customError || ''} ${
-        message || ''
-      }`.trim(),
-      httpCode,
-      httpError,
-    });
+    if (!res.headersSent) {
+      res.status(httpCode).json({
+        success: false,
+        stack: errorStack,
+        message: `${customErrorCode || ''} ${customError || ''} ${
+          message || ''
+        }`.trim(),
+        httpCode,
+        httpError,
+      });
+    }
   } catch (error) {
     console.log('Error occurred while handling another error:', error);
+    _next(error); // Pass error to Express if another error occurs
   }
 };
 

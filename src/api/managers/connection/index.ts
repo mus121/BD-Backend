@@ -62,24 +62,46 @@ const updateConnectionTimestamp = async (
  */
 const updateConnectionDetails = async ({
   id,
+  firstName,
+  lastName,
+  headline,
+  profilePicture,
   publicIdentifier,
   entityUrn,
   connectionStatus,
   transaction,
 }: UpdateConnection) => {
-  await sequelize.query(
-    `UPDATE "connection"
-     SET public_identifier = :publicIdentifier,
-         entity_urn = :entityUrn, 
-         connection_status = :connectionStatus, 
-         updated_at = NOW()
-     WHERE id = :id`,
-    {
-      type: QueryTypes.UPDATE,
-      replacements: { id, publicIdentifier, entityUrn, connectionStatus },
-      transaction,
-    },
-  );
+  try {
+    await sequelize.query(
+      `UPDATE "connection"
+       SET first_name = :firstName,
+           last_name = :lastName,
+           headline = :headline,
+           profile_picture = :profilePicture,
+           public_identifier = :publicIdentifier,
+           entity_urn = :entityUrn, 
+           connection_status = :connectionStatus, 
+           updated_at = NOW()
+       WHERE id = :id`,
+      {
+        type: QueryTypes.UPDATE,
+        replacements: {
+          id,
+          firstName,
+          lastName,
+          headline,
+          profilePicture,
+          publicIdentifier,
+          entityUrn,
+          connectionStatus,
+        },
+        transaction,
+      },
+    );
+  } catch (error) {
+    console.error('Error updating connection details:', error);
+    throw new Error('Failed to update connection details');
+  }
 };
 
 /**
@@ -87,6 +109,10 @@ const updateConnectionDetails = async ({
  */
 const insertNewConnection = async ({
   userId,
+  firstName,
+  lastName,
+  headline,
+  profilePicture,
   publicIdentifier,
   entityUrn,
   connectionStatus,
@@ -94,13 +120,17 @@ const insertNewConnection = async ({
 }: InserNewConnection) => {
   const id = ulid();
   await sequelize.query(
-    `INSERT INTO "connection" (id, user_id, public_identifier, entity_urn, connection_status, created_at, updated_at)
-     VALUES (:id, :userId, :publicIdentifier, :entityUrn, :connectionStatus, NOW(), NOW())`,
+    `INSERT INTO "connection" (id, user_id, first_name, last_name, headline, profile_picture, public_identifier, entity_urn, connection_status, created_at, updated_at)
+     VALUES (:id, :userId, :firstName, :lastName, :headline, :profilePicture, :publicIdentifier, :entityUrn, :connectionStatus, NOW(), NOW())`,
     {
       type: QueryTypes.INSERT,
       replacements: {
         id,
         userId,
+        firstName,
+        lastName,
+        headline,
+        profilePicture,
         publicIdentifier,
         entityUrn,
         connectionStatus,
@@ -115,6 +145,10 @@ const insertNewConnection = async ({
  */
 export const handleProfileConnection = async ({
   userId,
+  firstName,
+  lastName,
+  headline,
+  profilePicture,
   publicIdentifier,
   entityUrn,
   connectionStatus,
@@ -144,6 +178,10 @@ export const handleProfileConnection = async ({
       } else {
         await updateConnectionDetails({
           id,
+          firstName,
+          lastName,
+          headline,
+          profilePicture,
           publicIdentifier,
           entityUrn,
           connectionStatus,
@@ -153,6 +191,10 @@ export const handleProfileConnection = async ({
     } else {
       await insertNewConnection({
         userId,
+        firstName,
+        lastName,
+        headline,
+        profilePicture,
         publicIdentifier,
         entityUrn,
         connectionStatus,
@@ -184,7 +226,7 @@ export const retrieveConnectedProfiles = async ({
 }: RetrieveConnection): Promise<ConnectedProfile[]> => {
   try {
     const query = `
-      SELECT public_identifier, entity_urn 
+      SELECT first_name, last_name, headline, profile_picture, public_identifier, entity_urn 
       FROM "connection"
       WHERE user_id = :userId AND connection_status = TRUE
     `;

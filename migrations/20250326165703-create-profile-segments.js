@@ -5,7 +5,7 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       await queryInterface.createTable(
-        'connection',
+        'profile_segments',
         {
           id: {
             allowNull: false,
@@ -16,34 +16,14 @@ module.exports = {
             allowNull: false,
             type: Sequelize.INTEGER,
           },
-          first_name: {
+          labels: {
             allowNull: false,
             type: Sequelize.STRING,
           },
-          last_name: {
-            allowNull: false,
-            type: Sequelize.STRING,
-          },
-          headline: {
-            allowNull: false,
-            type: Sequelize.STRING,
-          },
-          profile_picture: {
-            allowNull: true,
-            type: Sequelize.STRING,
-          },
-          public_identifier: {
-            allowNull: true,
-            type: Sequelize.STRING,
-          },
-          entity_urn: {
-            allowNull: true,
-            type: Sequelize.STRING,
-          },
-          connection_status: {
+          is_checked: {
             allowNull: false,
             type: Sequelize.BOOLEAN,
-            default: false,
+            defaultValue: false,
           },
           created_at: {
             allowNull: false,
@@ -69,7 +49,7 @@ module.exports = {
   down: async (queryInterface) => {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.dropTable('connection', { transaction });
+      await queryInterface.dropTable('profile_segments', { transaction });
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();

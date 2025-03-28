@@ -2,7 +2,7 @@ import { ParsedQs } from 'qs';
 import { validationCode } from '../../validators/auth';
 import { handleGoogleAuth } from '../managers/auth';
 import { generateAuthUrl, generateState } from '../../utils/auth';
-import { AuthDataType } from '../../interfaces/authRequest';
+import { AuthDataType } from '../../interfaces/auth';
 
 export class AuthController {
   public async googleLogin(): Promise<string> {

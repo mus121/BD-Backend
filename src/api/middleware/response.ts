@@ -32,6 +32,6 @@ export const responseMiddleware = async (
 
     return next();
   } catch (error) {
-    return errorMiddleware(error as BDError, req, res);
+    return errorMiddleware(error as BDError, req, res, next);
   }
 };

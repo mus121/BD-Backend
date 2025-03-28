@@ -75,7 +75,7 @@ export enum ErrorCode {
   // Add more error codes as needed
 }
 
-const HttpStatusCodeErrorMessages: Record<HttpStatusCode, string> = {
+export const HttpStatusCodeErrorMessages: Record<HttpStatusCode, string> = {
   [HttpStatusCode.Continue]: 'Continue: Server expects further request data',
   [HttpStatusCode.SwitchingProtocols]:
     'Switching Protocols: Server is switching protocols',

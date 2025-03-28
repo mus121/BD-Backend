@@ -23,7 +23,7 @@ export type ExistingConnections = {
 };
 
 export type LiProfile = {
-  userId: string;
+  userId: number;
   firstName: string;
   lastName: string;
   publicIdentifier: string;
@@ -31,7 +31,7 @@ export type LiProfile = {
 };
 
 export type LiConnection = {
-  userId: string;
+  userId: number;
   firstName: string;
   lastName: string;
   publicIdentifier: string;
@@ -39,18 +39,26 @@ export type LiConnection = {
 };
 
 export type LiConnectionProfile = {
-  userId: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  headline: string;
+  profilePicture: string;
   publicIdentifier: string;
   entityUrn: string;
   connectionStatus: boolean;
 };
 
 export type RetrieveConnection = {
-  userId: string;
+  userId: number;
 };
 
 export type InserNewConnection = {
-  userId: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  headline: string;
+  profilePicture: string;
   publicIdentifier: string;
   entityUrn: string;
   connectionStatus: boolean;
@@ -58,6 +66,10 @@ export type InserNewConnection = {
 };
 export type UpdateConnection = {
   id: string;
+  firstName: string;
+  lastName: string;
+  headline: string;
+  profilePicture: string;
   publicIdentifier: string;
   entityUrn: string;
   connectionStatus: boolean;
@@ -65,7 +77,7 @@ export type UpdateConnection = {
 };
 
 export type FetchExistingConnection = {
-  userId: string;
+  userId: number;
   publicIdentifier: string;
   transaction: Transaction;
 };
