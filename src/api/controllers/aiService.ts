@@ -1,12 +1,13 @@
-import { Tags, Route, Post, Body, Get } from 'tsoa';
+import { Tags, Route, Post, Body } from 'tsoa';
 import { esIdsFetch } from '../managers/esIds/index';
 
-import { ProfileRequest, ProfilesResponse } from '../../interfaces/aiService';
+import { ProfileRequest } from '../../interfaces/aiService';
 import {
   getProfileSegmentByEsids,
   getProfileSegmentByLabel,
 } from '../managers/aiService';
 import { profileFetchByEsids } from '../managers/profileByEsIds';
+
 @Tags('profile')
 @Route('profile')
 export class AiProfileController {

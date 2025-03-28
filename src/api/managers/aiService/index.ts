@@ -1,8 +1,4 @@
-import {
-  ProfileRequest,
-  ProfilesResponse,
-  EsIds,
-} from '../../../interfaces/aiService';
+import { ProfileRequest, EsIds } from '../../../interfaces/aiService';
 
 export const getProfileSegmentByEsids = async (
   esIds: EsIds,
