@@ -32,3 +32,19 @@ export type ProfileLabels = {
   created_at?: Date;
   updated_at?: Date;
 };
+export type ProfileRecieve = {
+  score: number;
+  id: string;
+  experienceHits: number[];
+};
+
+export type ProfilesResponse = {
+  message: string;
+  profiles: ProfileRecieve[];
+};
+
+export type EsIds = {
+  profiles: {
+    es_id: string;
+  }[];
+};

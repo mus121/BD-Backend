@@ -1,6 +1,6 @@
-export const esIdsFetch = async (publicIdentifiers: string[]) => {
+export const profileFetchByEsids = async (es_id: string[]) => {
   const response = await fetch(
-    `${process.env.BD_ESID_PUBLIC_IDENTIFIER}/retrieveProfileIdByPublicIdentifier`,
+    `${process.env.BD_ESID_PUBLIC_IDENTIFIER}/getProfilesByProfileIds`,
     {
       method: 'POST',
       headers: {
@@ -8,7 +8,7 @@ export const esIdsFetch = async (publicIdentifiers: string[]) => {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-      body: JSON.stringify(publicIdentifiers),
+      body: JSON.stringify({ esIds: es_id }),
     },
   );
 
@@ -20,9 +20,5 @@ export const esIdsFetch = async (publicIdentifiers: string[]) => {
     );
   }
 
-  return {
-    profiles: result.map((es_id: { id: string }) => ({
-      es_id: es_id.id,
-    })) as { es_id: string }[],
-  };
+  return result;
 };

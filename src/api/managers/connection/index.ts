@@ -71,32 +71,37 @@ const updateConnectionDetails = async ({
   connectionStatus,
   transaction,
 }: UpdateConnection) => {
-  await sequelize.query(
-    `UPDATE "connection"
-     SET first_name = :firstName,
-         last_name = :lastName,
-         headline = :headline,
-         profile_picture = :profilePicture,
-         public_identifier = :publicIdentifier,
-         entity_urn = :entityUrn, 
-         connection_status = :connectionStatus, 
-         updated_at = NOW()
-     WHERE id = :id`,
-    {
-      type: QueryTypes.UPDATE,
-      replacements: {
-        id,
-        firstName,
-        lastName,
-        headline,
-        profilePicture,
-        publicIdentifier,
-        entityUrn,
-        connectionStatus,
+  try {
+    await sequelize.query(
+      `UPDATE "connection"
+       SET first_name = :firstName,
+           last_name = :lastName,
+           headline = :headline,
+           profile_picture = :profilePicture,
+           public_identifier = :publicIdentifier,
+           entity_urn = :entityUrn, 
+           connection_status = :connectionStatus, 
+           updated_at = NOW()
+       WHERE id = :id`,
+      {
+        type: QueryTypes.UPDATE,
+        replacements: {
+          id,
+          firstName,
+          lastName,
+          headline,
+          profilePicture,
+          publicIdentifier,
+          entityUrn,
+          connectionStatus,
+        },
+        transaction,
       },
-      transaction,
-    },
-  );
+    );
+  } catch (error) {
+    console.error('Error updating connection details:', error);
+    throw new Error('Failed to update connection details');
+  }
 };
 
 /**

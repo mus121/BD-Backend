@@ -23,4 +23,17 @@ router.post('/lables', (async (
   }
 }) as RequestHandler);
 
+router.post('/getProfiles', (async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const response = await controller.getProfilesByEsId(req.body);
+    return res.send(response);
+  } catch (error) {
+    return next(error);
+  }
+}) as RequestHandler);
+
 export default router;

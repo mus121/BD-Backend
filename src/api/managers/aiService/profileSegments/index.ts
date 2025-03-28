@@ -117,3 +117,29 @@ export const saveProfileSegment = async ({
     );
   }
 };
+
+/**
+ * Fetch profile segment labels by userId
+ */
+export const fetchProfileSegmentLabels = async (
+  userId: number,
+): Promise<string[]> => {
+  try {
+    const result = await sequelize.query<{ labels: string }>(
+      'SELECT labels FROM profile_segments WHERE user_id = :userId;',
+      {
+        type: QueryTypes.SELECT,
+        replacements: { userId },
+      },
+    );
+
+    return result.map((row) => row.labels);
+  } catch (error) {
+    console.error('Error fetching profile segment labels:', error);
+    throw new BDError(
+      'Failed to fetch profile segment labels',
+      HttpStatusCode.InternalServerError,
+      ErrorCode.DBError,
+    );
+  }
+};
