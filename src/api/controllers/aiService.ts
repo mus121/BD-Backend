@@ -1,6 +1,9 @@
-import { Tags, Route, Post, Body } from 'tsoa';
+import { Tags, Route, Post, Body, Get, Path, Query } from 'tsoa';
 import { esIdsFetch } from '../managers/esIds/index';
-
+import {
+  handleFollowProfile,
+  handleGetFollowProfile,
+} from '../managers/aiService/followProfile/index';
 import { ProfileRequest } from '../../interfaces/aiService';
 import {
   getProfileSegmentByEsids,
@@ -23,7 +26,7 @@ export class AiProfileController {
   public async getProfilesByEsId(@Body() body: { label: string }) {
     try {
       const esIdsResponse = await getProfileSegmentByLabel(body);
-      console.log('esIdsResponse', esIdsResponse);
+
       const esIds = esIdsResponse.ids;
 
       if (!esIds.length) {
@@ -39,5 +42,39 @@ export class AiProfileController {
       console.error('Error fetching full profiles:', error);
       throw new Error('Failed to fetch profiles');
     }
+  }
+
+  /**
+   * Follow or Unfollow a profile
+   */
+
+  @Post('/followProfile')
+  public async followProfile(
+    @Body() body: { esId: string; connectionStatus: boolean },
+  ) {
+    try {
+      const result = await handleFollowProfile({
+        esId: body.esId,
+        connectionStatus: body.connectionStatus,
+      });
+      return result;
+    } catch (error) {
+      console.error('Error handling follow profile:', error);
+      throw new Error('Failed to process follow profile request');
+    }
+  }
+
+  @Get('/getFollowProfile')
+  public async getFollowProfile() {
+    const esIds = await handleGetFollowProfile();
+
+    if (esIds === null) {
+      return;
+    }
+
+    const profilesData = await profileFetchByEsids(esIds);
+    return {
+      profiles: profilesData,
+    };
   }
 }
