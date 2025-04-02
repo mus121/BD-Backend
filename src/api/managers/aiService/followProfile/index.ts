@@ -16,7 +16,6 @@ import {
  */
 const fetchExistingFollow = async ({
   esId,
-  transaction,
 }: FetchExistingFollow): Promise<ExistingFollow | null> => {
   if (!esId) {
     console.error('fetchExistingFollow Error: esId is undefined or null');

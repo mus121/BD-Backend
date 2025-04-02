@@ -1,4 +1,4 @@
-import { Tags, Route, Post, Body, Get, Path, Query } from 'tsoa';
+import { Tags, Route, Post, Body, Get } from 'tsoa';
 import { esIdsFetch } from '../managers/esIds/index';
 import {
   handleFollowProfile,
@@ -66,15 +66,20 @@ export class AiProfileController {
 
   @Get('/getFollowProfile')
   public async getFollowProfile() {
-    const esIds = await handleGetFollowProfile();
+    try {
+      const esIds = await handleGetFollowProfile();
 
-    if (esIds === null) {
-      return;
+      if (esIds === null) {
+        throw new Error('No follow profile found');
+      }
+
+      const profilesData = await profileFetchByEsids(esIds);
+      return {
+        profiles: profilesData,
+      };
+    } catch (error) {
+      console.error('Error fetching Follow Profiles:', error);
+      throw new Error('Failed to fetch profiles');
     }
-
-    const profilesData = await profileFetchByEsids(esIds);
-    return {
-      profiles: profilesData,
-    };
   }
 }
