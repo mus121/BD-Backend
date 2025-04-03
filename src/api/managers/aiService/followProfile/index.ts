@@ -22,8 +22,6 @@ const fetchExistingFollow = async ({
     throw new Error('fetchExistingFollow Error: esId is required');
   }
 
-  console.log('Executing fetchExistingFollow with esId:', esId);
-
   const result = await sequelize.query<ExistingFollow>(
     `SELECT id, es_id AS "esId", connection_status AS "connectionStatus"
      FROM "follow_profile"
