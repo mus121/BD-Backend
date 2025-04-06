@@ -24,7 +24,10 @@ export class AiProfileController {
   }
 
   @Post('/getProfilesByEsId')
-  public async getProfilesByEsId(@Body() body: { label: string }) {
+  public async getProfilesByEsId(
+    @Body() body: { label: string },
+    userId: number,
+  ) {
     try {
       const esIdsResponse = await getProfileSegmentByLabel(body);
       const esIds = esIdsResponse.ids;
@@ -35,7 +38,7 @@ export class AiProfileController {
 
       const [profilesData, followedProfileEsids] = await Promise.all([
         profileFetchByEsids(esIds),
-        getFollowedProfileData({ profileEsIds: esIds }),
+        getFollowedProfileData({ profileEsIds: esIds, userId }),
       ]);
       const followedSet = new Set(followedProfileEsids);
 

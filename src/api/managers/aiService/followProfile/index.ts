@@ -174,18 +174,20 @@ export const handleGetFollowProfile = async ({
 };
 
 export const getFollowedProfileData = async ({
+  userId,
   profileEsIds,
 }: {
   profileEsIds: string[];
+  userId: number;
 }): Promise<string[]> => {
   try {
     const result = await sequelize.query<{ esId: string }>(
       `SELECT es_id AS "esId"
        FROM "follow_profile"
-       WHERE es_id IN (:profileEsIds) AND connection_status = true`,
+       WHERE user_id = :userId AND es_id IN (:profileEsIds) AND connection_status = true`,
       {
         type: QueryTypes.SELECT,
-        replacements: { profileEsIds },
+        replacements: { profileEsIds, userId },
       },
     );
     return result.map((item) => item.esId);
