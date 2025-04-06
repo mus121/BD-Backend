@@ -30,7 +30,7 @@ router.get('/labels', (async (
   next: NextFunction,
 ) => {
   try {
-    const userId = req.query.userId as unknown as number;
+    const userId = res.locals.user.id;
 
     if (!userId) {
       return res.status(HttpStatusCode.BadRequest).json({

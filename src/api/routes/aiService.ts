@@ -29,7 +29,8 @@ router.post('/getProfiles', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.getProfilesByEsId(req.body);
+    const userId = res.locals.user.id;
+    const response = await controller.getProfilesByEsId(req.body, userId);
     return res.send(response);
   } catch (error) {
     return next(error);
@@ -41,9 +42,11 @@ router.post('/followProfile', (async (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log('Request body:', req.body);
   try {
-    const response = await controller.followProfile(req.body);
+    const response = await controller.followProfile(
+      req.body,
+      res.locals.user.id,
+    );
     return res.send(response);
   } catch (error) {
     return next(error);
@@ -56,7 +59,8 @@ router.get('/getFollowProfile', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.getFollowProfile();
+    const userId = res.locals.user.id;
+    const response = await controller.getFollowProfile(userId);
     return res.send(response);
   } catch (error) {
     return next(error);

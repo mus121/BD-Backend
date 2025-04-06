@@ -29,6 +29,7 @@ export type RetrieveFollowsRequest = {
 };
 
 export type InsertNewFollow = {
+  userId: number;
   esId: string;
   connectionStatus: boolean;
   transaction: Transaction;
@@ -47,6 +48,7 @@ export type FetchExistingFollow = {
 };
 
 export type FollowProfileData = {
+  userId: number;
   esId: string;
   connectionStatus: boolean;
 };
