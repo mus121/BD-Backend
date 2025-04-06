@@ -1,8 +1,9 @@
-import { Tags, Route, Post, Body, Get } from 'tsoa';
+import { Tags, Route, Post, Body, Get, Query } from 'tsoa';
 import { esIdsFetch } from '../managers/esIds/index';
 import {
   handleFollowProfile,
   handleGetFollowProfile,
+  getFollowedProfileData,
 } from '../managers/aiService/followProfile/index';
 import { ProfileRequest } from '../../interfaces/aiService';
 import {
@@ -26,21 +27,29 @@ export class AiProfileController {
   public async getProfilesByEsId(@Body() body: { label: string }) {
     try {
       const esIdsResponse = await getProfileSegmentByLabel(body);
-
       const esIds = esIdsResponse.ids;
 
       if (!esIds.length) {
         return { message: 'No profiles found', profiles: [] };
       }
 
-      const profilesData = await profileFetchByEsids(esIds);
+      const [profilesData, followedProfileEsids] = await Promise.all([
+        profileFetchByEsids(esIds),
+        getFollowedProfileData({ profileEsIds: esIds }),
+      ]);
+      const followedSet = new Set(followedProfileEsids);
 
-      return {
-        profiles: profilesData,
-      };
+      /* eslint-disable */
+      const finalProfileData = profilesData.map((fprofile: any) => ({
+        ...fprofile,
+        isConnected: followedSet.has(fprofile.id),
+      }));
+      return { profiles: finalProfileData };
     } catch (error) {
       console.error('Error fetching full profiles:', error);
-      throw new Error('Failed to fetch profiles');
+      return {
+        profiles: [],
+      };
     }
   }
 
@@ -51,11 +60,14 @@ export class AiProfileController {
   @Post('/followProfile')
   public async followProfile(
     @Body() body: { esId: string; connectionStatus: boolean },
+    userId: number,
   ) {
     try {
+      const { esId, connectionStatus } = body;
       const result = await handleFollowProfile({
-        esId: body.esId,
-        connectionStatus: body.connectionStatus,
+        userId,
+        esId,
+        connectionStatus,
       });
       return result;
     } catch (error) {
@@ -65,9 +77,9 @@ export class AiProfileController {
   }
 
   @Get('/getFollowProfile')
-  public async getFollowProfile() {
+  public async getFollowProfile(@Query() userId: number) {
     try {
-      const esIds = await handleGetFollowProfile();
+      const esIds = await handleGetFollowProfile({ userId });
 
       if (esIds === null) {
         throw new Error('No follow profile found');

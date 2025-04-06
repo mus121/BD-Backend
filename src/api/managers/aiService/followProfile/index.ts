@@ -10,6 +10,7 @@ import {
   UpdateFollow,
   FetchExistingFollow,
 } from '../../../../interfaces/followProfile';
+import { RetrieveConnection } from '../../../../interfaces/connection';
 
 /**
  * Fetch an existing follow request by es_id
@@ -80,17 +81,18 @@ const updateFollowDetails = async ({
  * Insert a new follow request into the database
  */
 const insertNewFollow = async ({
+  userId,
   esId,
   connectionStatus,
   transaction,
 }: InsertNewFollow) => {
   const id = ulid();
   await sequelize.query(
-    `INSERT INTO "follow_profile" (id, es_id, connection_status, created_at, updated_at)
-     VALUES (:id, :esId, :connectionStatus, NOW(), NOW())`,
+    `INSERT INTO "follow_profile" (id, user_id, es_id, connection_status, created_at, updated_at)
+     VALUES (:id, :userId, :esId, :connectionStatus, NOW(), NOW())`,
     {
       type: QueryTypes.INSERT,
-      replacements: { id, esId, connectionStatus },
+      replacements: { id, userId, esId, connectionStatus },
       transaction,
     },
   );
@@ -100,6 +102,7 @@ const insertNewFollow = async ({
  * Handle follow request logic: create, update, or refresh timestamp
  */
 export const handleFollowProfile = async ({
+  userId,
   esId,
   connectionStatus,
 }: FollowProfileData): Promise<FollowProfileResult> => {
@@ -123,7 +126,7 @@ export const handleFollowProfile = async ({
         await updateFollowDetails({ id, esId, connectionStatus, transaction });
       }
     } else {
-      await insertNewFollow({ esId, connectionStatus, transaction });
+      await insertNewFollow({ userId, esId, connectionStatus, transaction });
     }
 
     await transaction.commit();
@@ -145,18 +148,47 @@ export const handleFollowProfile = async ({
 /**
  * Fetch follow profile details by esId
  */
-export const handleGetFollowProfile = async (): Promise<string[] | null> => {
+export const handleGetFollowProfile = async ({
+  userId,
+}: RetrieveConnection): Promise<string[] | null> => {
   try {
     const result = await sequelize.query<{ esId: string }>(
       `SELECT  es_id AS "esId"
          FROM "follow_profile"
-         where connection_status= true`,
+         where user_id = :userId AND connection_status= true`,
       {
         type: QueryTypes.SELECT,
+        replacements: { userId },
       },
     );
 
     return result.length > 0 ? result.map((item) => item.esId) : null;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new BDError(
+      'Database operation failed',
+      HttpStatusCode.InternalServerError,
+      ErrorCode.DBError,
+    );
+  }
+};
+
+export const getFollowedProfileData = async ({
+  profileEsIds,
+}: {
+  profileEsIds: string[];
+}): Promise<string[]> => {
+  try {
+    const result = await sequelize.query<{ esId: string }>(
+      `SELECT es_id AS "esId"
+       FROM "follow_profile"
+       WHERE es_id IN (:profileEsIds) AND connection_status = true`,
+      {
+        type: QueryTypes.SELECT,
+        replacements: { profileEsIds },
+      },
+    );
+    return result.map((item) => item.esId);
   } catch (error) {
     console.error('Database Error:', error);
     throw new BDError(

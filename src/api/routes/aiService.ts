@@ -41,9 +41,11 @@ router.post('/followProfile', (async (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log('Request body:', req.body);
   try {
-    const response = await controller.followProfile(req.body);
+    const response = await controller.followProfile(
+      req.body,
+      res.locals.user.id,
+    );
     return res.send(response);
   } catch (error) {
     return next(error);
@@ -56,7 +58,10 @@ router.get('/getFollowProfile', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.getFollowProfile();
+    console.log('respipofndb n', res.locals.user);
+    const userId = res.locals.user.id;
+    console.log('userId', userId);
+    const response = await controller.getFollowProfile(userId);
     return res.send(response);
   } catch (error) {
     return next(error);
