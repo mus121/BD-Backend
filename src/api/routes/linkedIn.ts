@@ -7,7 +7,7 @@ import {
 } from 'express';
 import { LinkedInController } from '../controllers/linkedIn';
 import { validateRequest } from '../middleware/validation';
-import { liConnectionSchema, liProfileSchema } from '../../validators/linkedin';
+import { liProfileSchema } from '../../validators/linkedin';
 import { HttpStatusCode } from '../../utils/bdError';
 
 const router = Router();
