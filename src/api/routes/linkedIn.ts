@@ -50,7 +50,7 @@ router.get('/connection', (async (
     const userId = res.locals.user.id;
     if (!userId) {
       res.status(HttpStatusCode.BadRequest).json({
-        error: 'userId is required and must be a number',
+        error: 'userId. is required and must be a number',
       });
       return;
     }
