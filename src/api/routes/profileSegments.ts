@@ -17,7 +17,8 @@ router.post('/segments', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.saveSegment(req.body);
+    const userId = res.locals.user.id;
+    const response = await controller.saveSegment(req.body, userId);
     return res.send(response);
   } catch (error) {
     return next(error);

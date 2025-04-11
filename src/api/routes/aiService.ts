@@ -43,10 +43,8 @@ router.post('/followProfile', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.followProfile(
-      req.body,
-      res.locals.user.id,
-    );
+    const userId = res.locals.user.id;
+    const response = await controller.followProfile(req.body, userId);
     return res.send(response);
   } catch (error) {
     return next(error);

@@ -7,10 +7,7 @@ import {
 } from 'express';
 import { LinkedInController } from '../controllers/linkedIn';
 import { validateRequest } from '../middleware/validation';
-import {
-  getConnectedProfilesSchema,
-  liProfileSchema,
-} from '../../validators/linkedin';
+import { liConnectionSchema, liProfileSchema } from '../../validators/linkedin';
 import { HttpStatusCode } from '../../utils/bdError';
 
 const router = Router();
@@ -22,7 +19,8 @@ router.post('/profile', validateRequest(liProfileSchema), (async (
   next: NextFunction,
 ) => {
   try {
-    const response = controller.saveProfile(req.body);
+    const userId = res.locals.user.id;
+    const response = controller.saveProfile(req.body, userId);
     return res.send(response);
   } catch (error) {
     return next(error);
@@ -35,20 +33,21 @@ router.post('/follow', (async (
   next: NextFunction,
 ) => {
   try {
-    const response = await controller.connectProfile(req.body);
+    const userId = res.locals.user.id;
+    const response = await controller.connectProfile(req.body, userId);
     return res.send(response);
   } catch (error) {
     return next(error);
   }
 }) as RequestHandler);
 
-router.get('/connection', validateRequest(getConnectedProfilesSchema), (async (
+router.get('/connection', (async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const userId = req.query.userId as unknown as number;
+    const userId = res.locals.user.id;
     if (!userId) {
       res.status(HttpStatusCode.BadRequest).json({
         error: 'userId is required and must be a number',

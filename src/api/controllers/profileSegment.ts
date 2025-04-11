@@ -10,8 +10,8 @@ import { BDError, ErrorCode, HttpStatusCode } from '../../utils/bdError';
 @Route('profile-segment')
 export class ProfileSegmentController {
   @Post('/')
-  public async saveSegment(@Body() segmentData: ProfileLabels) {
-    const result = await saveProfileSegment(segmentData);
+  public async saveSegment(@Body() segmentData: ProfileLabels, userId: number) {
+    const result = await saveProfileSegment({ ...segmentData, userId });
 
     if (!result.success) {
       throw new BDError(

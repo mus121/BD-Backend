@@ -94,7 +94,9 @@ export class AiProfileController {
       };
     } catch (error) {
       console.error('Error fetching Follow Profiles:', error);
-      throw new Error('Failed to fetch profiles');
+      return {
+        profiles: [],
+      };
     }
   }
 }

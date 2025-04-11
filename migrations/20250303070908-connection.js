@@ -17,15 +17,15 @@ module.exports = {
             type: Sequelize.INTEGER,
           },
           first_name: {
-            allowNull: false,
+            allowNull: true,
             type: Sequelize.STRING,
           },
           last_name: {
-            allowNull: false,
+            allowNull: true,
             type: Sequelize.STRING,
           },
           headline: {
-            allowNull: false,
+            allowNull: true,
             type: Sequelize.STRING,
           },
           profile_picture: {

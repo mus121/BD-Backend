@@ -11,13 +11,16 @@ import {
 @Route('profile')
 export class LinkedInController {
   @Post('/profile')
-  public async saveProfile(@Body() profileData: LiProfile) {
-    return saveLinkedInProfile(profileData);
+  public async saveProfile(@Body() profileData: LiProfile, userId: number) {
+    return saveLinkedInProfile({ ...profileData, userId });
   }
 
   @Post('/follow')
-  public async connectProfile(@Body() connectionData: LiConnectionProfile) {
-    const result = await handleProfileConnection(connectionData);
+  public async connectProfile(
+    @Body() connectionData: LiConnectionProfile,
+    userId: number,
+  ) {
+    const result = await handleProfileConnection({ ...connectionData, userId });
 
     if (!result) {
       throw new BDError(
